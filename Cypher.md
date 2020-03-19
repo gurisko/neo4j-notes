@@ -62,11 +62,93 @@ Example:
 CREATE (:User {name: 'Amy'})-[:FRIEND]->(:User {name: 'Joe'})-[:FRIEND]->(:User {name: 'Tom'})
 ```
 
-### MATCH
-The clause is used to search for [the pattern](#patterns) described in it.
-
 ### RETURN
 * To return a property, use the dot separator `RETURN a.name` or squared brackets `RETURN a['name']` (a dynamic property expression). `null` value is returned if a property doesn't exist.
 * To return all properties, use `RETURN *`.
 * To rename a column, use `AS <new name>`: `RETURN a.name AS FirstName`.
 * To return only unique results, use `RETURN DISTINCT a`.
+
+`RETURN` has three sub-clauses that come with it:
+1. [`LIMIT`](#limit)
+2. [`SKIP`](#skip)
+3. [`ORDER BY`](#order-by)
+
+### MATCH
+The clause is used to search for [the pattern](#patterns) described in it.
+
+Example:
+```
+MATCH (m:Movie {title: 'The Matrix Reloaded'})-[]-(p:Person)
+RETURN p AS `People Involved`
+```
+
+### OPTIONAL MATCH
+It uses `null` for missing parts of a pattern.
+
+### WHERE
+The clause contains a predicate that acts as a constraint or a filter:
+* it adds constraints to `MATCH` and `OPTIONAL MATCH` clauses,
+* it filters results of a `WITH` clause.
+
+Example:
+```
+MATCH (n)
+WHERE n:Person
+RETURN n.name, n.age
+```
+
+### WITH
+The clause separates query parts explicitly, piping the results from one query to be used at the start of the next query.
+
+`WITH` has three sub-clauses that come with it:
+1. [`LIMIT`](#limit)
+2. [`SKIP`](#skip)
+3. [`ORDER BY`](#order-by)
+
+Example:
+```
+MATCH (user)-[:FRIEND]-(friend)
+WHERE user.name = $name
+WITH user, count(friend) AS friends
+WHERE friends > 10
+RETURN user
+```
+
+### UNWIND
+The clause expands a list into a sequence of records.
+
+Example:
+```
+UNWIND [1, 2, 3] AS x
+RETURN x
+```
+
+### ORDER BY
+The clause sorts the result.
+
+Example:
+```
+MATCH (n:Movie)
+RETURN n.title, n.released
+ORDER BY n.released DESC, n.title ASC
+```
+
+*Note: The value `null` is considered the largest value.*
+
+### LIMIT
+The clause limits the number of records in the output.
+It accepts any expression that results in a positive integer if it doesn't use any variable referring to nodes or relationships.
+
+### SKIP
+The clause skips the number of records in the output.
+It accepts any expression that results in a positive integer if it doesn't use any variable referring to nodes or relationships.
+The clause always precedes `LIMIT` clause.
+
+Example:
+```
+MATCH (n)
+RETURN n.name
+ORDER BY n.name
+SKIP toInteger(3*rand())+ 1
+LIMIT 1
+```
