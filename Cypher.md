@@ -152,3 +152,62 @@ ORDER BY n.name
 SKIP toInteger(3*rand())+ 1
 LIMIT 1
 ```
+
+### SET
+The clause can be used for adding labels to a node and adding (removing) properties.
+If the property value is `null`, the property is removed.
+
+Examples:
+```
+SET n:Label1:Label2
+SET n.property1 = value, n.property2 = value
+SET n += {prop: value}
+SET n = {prop: value} // This removes any existing properties
+SET n.property = null // This removes a property
+```
+
+### REMOVE
+It removes labels and properties:
+```
+REMOVE n:Person
+REMOVE n.property
+```
+
+### DELETE
+The clause removes a graph element:
+```
+MATCH (n:Person {name: 'Tom'})
+DELETE n
+```
+
+Use `DETACH DELETE` to delete a node, the relationships to and from the node:
+```
+MATCH (n)
+DETACH DELETE n
+```
+*(The query above deletes all data in the database. It is not for deleting large amounts of data though)*
+
+### MERGE
+The clause ensures that [a pattern](#patterns) exists in the graph.
+
+Example:
+```
+MATCH (oliver:Person {name: 'Oliver'}), (rob:Person {name: 'Rob'})
+MERGE (oliver)-[:DIRECTED]->(movie:Movie)<-[:ACTED_IN]-(rob)
+RETURN movie
+```
+
+> :warning:
+`MERGE` can also be used with undirected relationship!
+When it needs to create a new one, it will pick a direction.
+
+The clause allows to specify behaviour when merging with:
+* `ON CREATE` to assign values to an element being created,
+* `ON MATCH` to update an element's values when it is found:
+```
+MERGE (a:Person {name: 'Sir Michael Caine'})
+ON CREATE SET a.born = 1934,
+              a.birthPlace = 'UK'
+ON MATCH SET a.birthPlace = 'UK'
+RETURN a
+```
