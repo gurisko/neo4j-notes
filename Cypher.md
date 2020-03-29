@@ -142,7 +142,6 @@ It accepts any expression that results in a positive integer if it doesn't use a
 ### SKIP
 The clause skips the number of records in the output.
 It accepts any expression that results in a positive integer if it doesn't use any variable referring to nodes or relationships.
-The clause always precedes `LIMIT` clause.
 
 Example:
 ```
@@ -174,13 +173,15 @@ REMOVE n.property
 ```
 
 ### DELETE
-The clause removes a graph element:
+The clause removes a graph element.
+A node can't be removed if it still has relationships.
 ```
 MATCH (n:Person {name: 'Tom'})
 DELETE n
 ```
 
-Use `DETACH DELETE` to delete a node, the relationships to and from the node:
+### DETACH DELETE
+It is used to delete a node, the relationships to and from the node:
 ```
 MATCH (n)
 DETACH DELETE n

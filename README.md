@@ -5,5 +5,5 @@ My notes on the way to obtain a [Neo4j certification](https://neo4j.com/graphaca
 The certification exam included the following subjects at the time:
 * The property graph model
 * [Cypher syntax, including creation and querying of data](Cypher.md)
-* Data modeling
+* [Data modeling](Data%20Modeling.md)
 * Developing with Neo4j
